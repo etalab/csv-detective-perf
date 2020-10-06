@@ -3,3 +3,5 @@ results_inter.csv
 secrets.py
 venv/
 full.csv
+results.csv
+__pycache__/

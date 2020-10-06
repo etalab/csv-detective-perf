@@ -35,15 +35,22 @@ ct = ['adresse','booleen','code_commune_insee','code_csp_insee',
         'code_departement','code_fantoir','code_postal','code_region','code_rna',
         'code_waldec','commune','csp_insee','date','date_fr','datetime_iso',
         'departement','email','insee_ape700','insee_canton','iso_country_code',
-        'jour_de_la_semaine','json_geojson','latitude_l93','latitude_wgs',
-        'latitude_wgs_fr_metropole','latlon_wgs','longitude_l93','longitude_wgs',
-        'longitude_wgs_fr_metropole','money','pays','region','sexe','siren','siret',
+        'jour_de_la_semaine','json_geojson','latitude_l93','latitude_wgs','latlon_wgs',
+        'longitude_l93','longitude_wgs','money','pays','region','sexe','siren','siret',
         'tel_fr','uai','url','year']
+
+ct_new = ['personne','type_de_voie','lieu','integer','nom_entreprise','liste_de_valeurs','texte_long','nombre','pourcentage','age','finess','float']
+
+ct = ct + ct_new
+
+ct.sort()
 
 GLOBAL_LOC = -1
 
 
 
+ct = np.insert(ct, 0, "Bad Quality",axis=0)
+ct = np.insert(ct, 0, "Autre",axis=0)
 ct = np.insert(ct, 0, "Ne sais pas",axis=0)
 
 
@@ -61,6 +68,9 @@ app.layout = html.Div([
         ''')
     ], style={'float': 'left', 'width': '100%','height':'200px'}),
 
+    html.Div([
+        html.Div(id="mytable",children=[])
+    ], style={'float': 'left', 'width': '75%'}),
 
     html.Div(id="dropdowndiv",children=[
             dcc.Dropdown(
@@ -68,17 +78,16 @@ app.layout = html.Div([
                 options=[
                     {'label': i, 'value': i} for i in ct
                 ],
-                value='empty'
+                value='empty',
+                multi=True
             ),
             html.Br(),
             html.Div(id="result-dropdown",
-                children='')
+                children=''),
+            html.Button('Valider', id='submit-val', n_clicks=0),
 
     ], style={'float': 'left', 'width': '20%','marginRight':'30px'}),
-
-    html.Div([
-        html.Div(id="mytable",children=[])
-    ], style={'float': 'left', 'width': '75%'}),
+    
 
 
 
@@ -87,8 +96,9 @@ app.layout = html.Div([
 
 @app.callback(
     dash.dependencies.Output(component_id='mytable',component_property='children'),
-    [dash.dependencies.Input('dropdown', 'value')])
-def update_table(value):
+    [dash.dependencies.Input('submit-val', 'n_clicks')],
+    [dash.dependencies.State('dropdown', 'value')])
+def update_table(n_clicks, value):
 
     global GLOBAL_LOC
     global df 
@@ -164,21 +174,25 @@ def update_table(value):
     ])
 
 
+
 @app.callback(
     dash.dependencies.Output(component_id='dropdowndiv',component_property='children'),
-    [dash.dependencies.Input('dropdown', 'value')])
-def update_dropdown(value):
+    [dash.dependencies.Input('submit-val', 'n_clicks')],
+    [dash.dependencies.State('dropdown', 'value')])
+def update_dropdown(n_clicks, value):
     return html.Div([
             dcc.Dropdown(
                 id='dropdown',
                 options=[
                     {'label': i, 'value': i} for i in ct
                 ],
-                value='empty'
+                value='empty',
+                multi=True
             ),
             html.Br(),
             html.Div(id="result-dropdown",
-                children='')
+                children=''),
+            html.Button('Valider', id='submit-val', n_clicks=0),
     ])
 
 
